@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
     private TextView musicArtistTextView;
     private TextView musicCurrentTimeTextView;
     private ImageView musicCoverImageView;
-    private Button musicPlayButton;
+    private ImageButton musicPlayButton;
     private MusicListArrayAdapter musicListViewAdapter;
     private List<MusicListViewItem> musicListItems;
 
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
         musicArtistTextView = (TextView) findViewById(R.id.bar_musicArtistTextView);
         musicCurrentTimeTextView = (TextView) findViewById(R.id.bar_musicCurrentTimeTextView);
         musicCoverImageView = (ImageView) findViewById(R.id.bar_musicCoverImageView);
-        musicPlayButton = (Button) findViewById(R.id.bar_musicPlayButton);
+        musicPlayButton = (ImageButton) findViewById(R.id.bar_musicPlayButton);
 
         realm = Realm.getDefaultInstance();
         realmResults = realm.where(SongMetaTag.class).findAll();
@@ -106,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
 
         songs = new ArrayList<>();
 
-        String droid = "file:///storage/9C33-6BBD/TestDirectory/droid.png";
         mediaMetadataRetriever = new MediaMetadataRetriever();
 
         listView = (ListView) findViewById(R.id.musicList);
@@ -245,8 +245,7 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
                         mControllerCompat.getTransportControls().pause();
                     }
                 });
-                musicPlayButton.setText("Pause");
-                ;
+                musicPlayButton.setImageResource(R.drawable.exo_controls_pause);
             } else {
                 musicPlayButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -254,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
                         mControllerCompat.getTransportControls().play();
                     }
                 });
-                musicPlayButton.setText("Play");
+                musicPlayButton.setImageResource(R.drawable.exo_controls_play);
             }
         }
     };
