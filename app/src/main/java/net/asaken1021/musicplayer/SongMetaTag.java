@@ -1,17 +1,20 @@
 package net.asaken1021.musicplayer;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class SongMetaTag extends RealmObject {
 
     private int id;
     private String title;
     private String artist;
-    private String imageUri;
+    private byte[] imageByteArray;
     private String musicUri;
     private double length;
     private int relationId;
@@ -41,12 +44,12 @@ public class SongMetaTag extends RealmObject {
         this.artist = artist;
     }
 
-    public String getImageUri() {
-        return imageUri;
+    public byte[] getImageByteArray() {
+        return imageByteArray;
     }
 
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
+    public void setImageByteArray(byte[] imageByteArray) {
+        this.imageByteArray = imageByteArray;
     }
 
     public String getMusicUri() {

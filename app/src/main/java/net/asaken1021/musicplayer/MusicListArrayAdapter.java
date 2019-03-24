@@ -55,14 +55,13 @@ public class MusicListArrayAdapter extends ArrayAdapter<MusicListViewItem> {
 
         final MusicListViewItem item = getItem(position);
 
-//        viewHolder.musicCoverImageView.setImageURI(Uri.parse(item.musicCoverImageUri));
+        viewHolder.musicCoverImageView.setImageBitmap(item.musicCoverBitmapImage);
         viewHolder.musicTitleTextView.setText(item.musicTitleText);
         viewHolder.musicArtistTextView.setText(item.musicArtistText);
         viewHolder.musicLengthTextView.setText(item.musicLengthText);
         viewHolder.itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: 再生する
                 listener.playListViewItem(position);
             }
         });

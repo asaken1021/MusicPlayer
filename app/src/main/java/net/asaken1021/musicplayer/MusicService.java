@@ -167,23 +167,25 @@ public class MusicService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPlay() {
-//            if (am.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                mSession.setActive(true);
-                exoPlayer.setPlayWhenReady(true);
-//            }
+            Log.d("MusicPlayer_Service", "onPlay called");
+            mSession.setActive(true);
+            exoPlayer.setPlayWhenReady(true);
         }
 
         @Override
         public void onPause() {
+            Log.d("MusicPlayer_Service", "onPause called");
             exoPlayer.setPlayWhenReady(false);
             am.abandonAudioFocus(afChangeListener);
         }
 
         @Override
         public void onStop() {
+            Log.d("MusicPlayer_Service", "onStop called");
             onPause();
             mSession.setActive(false);
             am.abandonAudioFocus(afChangeListener);
+            onPlayFromMediaId(String.valueOf(++index), null); // 次の曲に移る（仮）
         }
 
         @Override
