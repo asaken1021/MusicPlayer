@@ -149,7 +149,7 @@ public class MusicService extends MediaBrowserServiceCompat {
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), Util.getUserAgent(getApplicationContext(), "AppName"));
             Uri uri = (MusicLibrary.getMusicUrl(mediaId));
-            MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse("http://res.cloudinary.com/konatsup/video/upload/v1552895349/dp8dmiaca4tfa4fumvgu.m4a"));
+            MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
 
             for (MediaSessionCompat.QueueItem item : queueItems)
                 if (item.getDescription().getMediaId().equals(mediaId))

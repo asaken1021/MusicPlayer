@@ -2,7 +2,9 @@ package net.asaken1021.musicplayer;
 
 import android.net.Uri;
 
-public class SongMetaTag {
+import io.realm.RealmObject;
+
+public class SongMetaTag extends RealmObject {
 
     private int id;
     private String title;
@@ -10,6 +12,7 @@ public class SongMetaTag {
     private Uri imageUri;
     private Uri musicUri;
     private double length;
+    private int relationId;
 
     public int getId() {
         return id;
@@ -57,5 +60,13 @@ public class SongMetaTag {
 
     public void setLength(double length) {
         this.length = length;
+    }
+
+    public int getRelationId() {
+        return relationId;
+    }
+
+    public void setRelationId(int relationId) {
+        this.relationId = relationId;
     }
 }
