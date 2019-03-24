@@ -1,11 +1,14 @@
 package net.asaken1021.musicplayer;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 
 public class MusicPlaylist extends RealmObject {
     private String playlistName;
     private int id;
     private int relationId;
+    private Date createdAt;
 
     public String getPlaylistName() {
         return playlistName;
@@ -29,5 +32,13 @@ public class MusicPlaylist extends RealmObject {
 
     public void setRelationId(int relationId) {
         this.relationId = relationId;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }

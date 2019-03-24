@@ -28,4 +28,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
+    implementation 'io.realm:android-adapters:2.1.1'
 }

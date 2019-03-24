@@ -1,6 +1,7 @@
 package net.asaken1021.musicplayer;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmBaseAdapter;
+import io.realm.RealmModel;
 
 public class MusicListArrayAdapter extends ArrayAdapter<MusicListViewItem> {
     List<MusicListViewItem> items;
@@ -49,7 +55,7 @@ public class MusicListArrayAdapter extends ArrayAdapter<MusicListViewItem> {
 
         final MusicListViewItem item = getItem(position);
 
-        viewHolder.musicCoverImageView.setImageBitmap(item.musicCoverImage);
+//        viewHolder.musicCoverImageView.setImageURI(Uri.parse(item.musicCoverImageUri));
         viewHolder.musicTitleTextView.setText(item.musicTitleText);
         viewHolder.musicArtistTextView.setText(item.musicArtistText);
         viewHolder.musicLengthTextView.setText(item.musicLengthText);

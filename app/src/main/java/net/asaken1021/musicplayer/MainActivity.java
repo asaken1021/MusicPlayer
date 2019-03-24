@@ -14,6 +14,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.MenuPopupWindow;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,9 +24,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.source.MediaSource;
+
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements MusicListItemListener {
 
@@ -52,8 +62,14 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
     private TextView musicTitleTextView;
     private ImageView musicCoverImageView;
     private Button musicPlayButton;
-    private List<MusicListViewItem> musicListItems;
     private MusicListArrayAdapter musicListViewAdapter;
+    private List<MusicListViewItem> musicListItems;
+
+    // データベース関連
+    private Realm realm;
+    private RealmResults<SongMetaTag> realmResults;
+    private List<String> addedFilePath;
+    private SongMetaTag temp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,38 +80,79 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
         musicCoverImageView = (ImageView) findViewById(R.id.bar_musicCoverImageView);
         musicPlayButton = (Button) findViewById(R.id.bar_musicPlayButton);
 
-        Log.d("MusicPlayer_fileSearch", "Search Path: " + sdCardPath);
+        realm = Realm.getDefaultInstance();
+        realmResults = realm.where(SongMetaTag.class).findAll();
+
+        Log.d("MusicPlayer_pathCheck", "Search Path-> " + sdCardPath);
         mp3Files = new File(sdCardPath).listFiles();
         if (mp3Files != null) {
             for (int x = 0; x < mp3Files.length; x++) {
                 if (mp3Files[x].isFile() && mp3Files[x].getName().endsWith("mp3")) {
                     fileNameList.add(mp3Files[x].getName());
-                    Log.d("MusicPlayer_fileCheck", "mp3 Found: " + mp3Files[x].getName());
+                    Log.d("MusicPlayer_fileSearch", "mp3 Found-> " + mp3Files[x].getName());
                 }
             }
-            listView = (ListView) findViewById(R.id.musicList);
-            musicListItems = new ArrayList<MusicListViewItem>();
-            musicListViewAdapter = new MusicListArrayAdapter(this, R.layout.music_list_view_item, musicListItems);
-            listView.setAdapter(musicListViewAdapter);
         }
 
         songs = new ArrayList<>();
 
-        Bitmap droid = BitmapFactory.decodeResource(getResources(), R.drawable.droid);
+        String droid = "file:///storage/9C33-6BBD/TestDirectory/droid.png";
         mediaMetadataRetriever = new MediaMetadataRetriever();
 
-        for (int x = 0; x < fileNameList.size(); x++) {
-            SongMetaTag smt = new SongMetaTag();
-//            songsUri.add(Uri.parse(sdCardPath + fileNameList.get(x)));
-            filePath = sdCardPath + fileNameList.get(x);
-            smt.setMusicUri(Uri.parse("file://" + filePath));
-            songs.add(smt);
-            mediaMetadataRetriever.setDataSource(filePath);
+        listView = (ListView) findViewById(R.id.musicList);
+        musicListItems = new ArrayList<>();
+        musicListViewAdapter = new MusicListArrayAdapter(this, R.layout.music_list_view_item, musicListItems);
+        listView.setAdapter(musicListViewAdapter);
+
+        addedFilePath = new ArrayList<>();
+
+        temp = new SongMetaTag();
+
+//        realm.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                realmResults.deleteAllFromRealm();
+//            }
+//        });
+
+        for (int x = 0; x < realmResults.size(); x++) { // 最初にRealmにある曲データを追加する
+            temp = realmResults.get(x);
+            mediaMetadataRetriever.setDataSource(temp.getMusicUri());
             musicTitle = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             musicArtist = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            musicLength = String2TimeString(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+            musicLength = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             musicListViewAdapter.add(new MusicListViewItem(droid, musicTitle, musicArtist, musicLength));
-            Log.d("MusicPlayer_songMetaTag", "Music added: " + songs.get(x));
+
+            addedFilePath.add(temp.getMusicUri());
+            songs.add(temp);
+            Log.d("MusicPlayer_add", "Music added from Realm database-> \"" + musicTitle + "\"");
+        }
+
+        for (int x = 0; x < fileNameList.size(); x++) { // その後、Realmとディレクトリから取得してきたものを比較し、Realmにないものを追加する
+            filePath = sdCardPath + fileNameList.get(x);
+            if (!addedFilePath.contains(filePath)) { // Realmに保存されているファイルパスのリストにない場合
+                temp.setMusicUri("file://" + filePath);
+                mediaMetadataRetriever.setDataSource(filePath);
+                musicTitle = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                musicArtist = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                musicLength = String2TimeString(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                temp.setTitle(musicTitle);
+                temp.setArtist(musicArtist);
+                temp.setLength(Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
+                musicListViewAdapter.add(new MusicListViewItem(droid, musicTitle, musicArtist, musicLength));
+
+                songs.add(temp);
+                Log.d("MusicPlayer_add", "Music added from local mp3 file->\"" + musicTitle + "\"");
+
+                realm.beginTransaction();
+                SongMetaTag temp_realm = realm.createObject(SongMetaTag.class);
+                temp_realm.setMusicUri(temp.getMusicUri());
+                temp_realm.setTitle(temp.getTitle());
+                temp_realm.setArtist(temp.getArtist());
+                temp_realm.setLength(temp.getLength());
+                realm.commitTransaction();
+                Log.d("MusicPlayer_realmAdd", "Music metatag added to Realm database->\"" + musicTitle + "\"");
+            }
         }
 
         MusicLibrary.setMediaItems(songs);
@@ -135,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
 
     private void Play(String id) {
         mControllerCompat.getTransportControls().playFromMediaId(id, null);
-        Log.d("MusicPlayer_play", "MusicID:" + id);
+        Log.d("MusicPlayer_play", "MusicID->" + id);
     }
 
     private MediaControllerCompat.Callback controllerCallback = new MediaControllerCompat.Callback() {
@@ -175,8 +232,13 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
     public void onDestroy() {
         super.onDestroy();
         mBrowserCompat.disconnect();
-        if (mControllerCompat.getPlaybackState().getState() != PlaybackStateCompat.STATE_PLAYING) {
-            stopService(new Intent(this, MusicService.class));
+        realm.close();
+        try {
+            if (mControllerCompat.getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING) {
+                stopService(new Intent(this, MusicService.class));
+            }
+        } catch (NullPointerException e) {
+            // 何もしない
         }
     }
 

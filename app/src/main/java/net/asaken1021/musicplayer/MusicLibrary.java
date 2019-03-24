@@ -85,7 +85,7 @@ public class MusicLibrary {
                     "genre",
                     30,
                     TimeUnit.SECONDS,
-                    tune.getMusicUri(),
+                    Uri.parse(tune.getMusicUri()),
                     R.drawable.ic_launcher_background,
                     "albumArtResName");
             i++;

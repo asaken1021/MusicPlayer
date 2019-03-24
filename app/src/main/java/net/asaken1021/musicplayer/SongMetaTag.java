@@ -2,6 +2,8 @@ package net.asaken1021.musicplayer;
 
 import android.net.Uri;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 
 public class SongMetaTag extends RealmObject {
@@ -9,10 +11,11 @@ public class SongMetaTag extends RealmObject {
     private int id;
     private String title;
     private String artist;
-    private Uri imageUri;
-    private Uri musicUri;
+    private String imageUri;
+    private String musicUri;
     private double length;
     private int relationId;
+    private Date createdAt;
 
     public int getId() {
         return id;
@@ -38,19 +41,19 @@ public class SongMetaTag extends RealmObject {
         this.artist = artist;
     }
 
-    public Uri getImageUri() {
+    public String getImageUri() {
         return imageUri;
     }
 
-    public void setImageUri(Uri imageUri) {
+    public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
     }
 
-    public Uri getMusicUri() {
+    public String getMusicUri() {
         return musicUri;
     }
 
-    public void setMusicUri(Uri musicUri) {
+    public void setMusicUri(String musicUri) {
         this.musicUri = musicUri;
     }
 
@@ -68,5 +71,13 @@ public class SongMetaTag extends RealmObject {
 
     public void setRelationId(int relationId) {
         this.relationId = relationId;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }
