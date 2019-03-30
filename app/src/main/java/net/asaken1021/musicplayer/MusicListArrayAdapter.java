@@ -20,8 +20,8 @@ import io.realm.RealmBaseAdapter;
 import io.realm.RealmModel;
 
 public class MusicListArrayAdapter extends ArrayAdapter<MusicListViewItem> {
-    List<MusicListViewItem> items;
-    MusicListItemListener listener;
+    private List<MusicListViewItem> items;
+    private MusicListItemListener listener;
 
     public MusicListArrayAdapter(Context context, int layoutResourceId, List<MusicListViewItem> objects) {
         super(context, layoutResourceId, objects);

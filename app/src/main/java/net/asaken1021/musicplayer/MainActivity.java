@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.MenuPopupWindow;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -175,6 +176,19 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
                 });
                 Log.d("MusicPlayer_realmAdd", "Music metatag added to Realm database->\"" + musicTitle + "\"");
                 ID++;
+            }
+        }
+
+        // そのファイルが存在する（アクセスできる）ことを確認する。なければRealmとAdapterから削除する
+        int position = 0;
+        for (SongMetaTag song : songs) {
+            File file = new File(song.getMusicUri());
+            if (file.canRead()) {
+                continue;
+            } else {
+                position = musicListViewAdapter.getPosition(new MusicListViewItem(song.getImageByteArray(), song.getTitle(), song.getArtist(), String.valueOf(song.getLength())));
+                musicListViewAdapter.remove(new MusicListViewItem(song.getImageByteArray(), song.getTitle(), song.getArtist(), String.valueOf(song.getLength())));
+                songs.remove(position);
             }
         }
 

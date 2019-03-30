@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 public class MusicListViewItem {
-    public String musicCoverImageUri;
     public Bitmap musicCoverBitmapImage;
     public String musicTitleText;
     public String musicArtistText;
