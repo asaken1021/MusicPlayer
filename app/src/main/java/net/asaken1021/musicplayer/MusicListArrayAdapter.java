@@ -1,23 +1,15 @@
 package net.asaken1021.musicplayer;
 
 import android.content.Context;
-import android.net.Uri;
-import android.support.v4.media.session.MediaControllerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
-
-import io.realm.OrderedRealmCollection;
-import io.realm.RealmBaseAdapter;
-import io.realm.RealmModel;
 
 public class MusicListArrayAdapter extends ArrayAdapter<MusicListViewItem> {
     private List<MusicListViewItem> items;
@@ -67,6 +59,11 @@ public class MusicListArrayAdapter extends ArrayAdapter<MusicListViewItem> {
         });
 
         return view;
+    }
+
+    public void editItem(int position, MusicListViewItem item) {
+        items.add(position, item);
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder {

@@ -1,5 +1,7 @@
 package net.asaken1021.musicplayer;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -117,12 +119,12 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
 
         addedFilePath = new ArrayList<>();
 
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realmResults.deleteAllFromRealm();
-            }
-        });
+//        realm.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                realmResults.deleteAllFromRealm();
+//            }
+//        });
 
         for (int x = 0; x < realmResults.size(); x++) { // 最初にRealmにある曲データを追加する
             temp = realmResults.get(x);
@@ -176,19 +178,6 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
                 });
                 Log.d("MusicPlayer_realmAdd", "Music metatag added to Realm database->\"" + musicTitle + "\"");
                 ID++;
-            }
-        }
-
-        // そのファイルが存在する（アクセスできる）ことを確認する。なければRealmとAdapterから削除する
-        int position = 0;
-        for (SongMetaTag song : songs) {
-            File file = new File(song.getMusicUri());
-            if (file.canRead()) {
-                continue;
-            } else {
-                position = musicListViewAdapter.getPosition(new MusicListViewItem(song.getImageByteArray(), song.getTitle(), song.getArtist(), String.valueOf(song.getLength())));
-                musicListViewAdapter.remove(new MusicListViewItem(song.getImageByteArray(), song.getTitle(), song.getArtist(), String.valueOf(song.getLength())));
-                songs.remove(position);
             }
         }
 
@@ -291,7 +280,13 @@ public class MainActivity extends AppCompatActivity implements MusicListItemList
         Play(String.valueOf(index));
     }
 
+    public void openPlayingView(View v) {
+        Intent i = new Intent();
+
+    }
+
     private String String2TimeString(String src) {
+        src = src.substring(0, src.indexOf("."));
         String mm = String.valueOf(Integer.parseInt(src) / 1000 / 60);
         String ss = String.valueOf((Integer.parseInt(src) / 1000) % 60);
 
